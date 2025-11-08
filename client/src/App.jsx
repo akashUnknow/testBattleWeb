@@ -4,6 +4,8 @@ import Home from "./Pages/Home";
 import Layout from "./Layout/Layout";
 import Dashboard from "./Pages/Dashboard";
 import ExamDetail from "./Pages/ExamDetail";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="test-series" element={<Dashboard />} />
         <Route path="skill-academy" element={<Dashboard />} />
         <Route path="pass" element={<Dashboard />} />
+        <Route path="log-in" element={<Login />} />
+        <Route path="Register" element={<Register />} />
       </Route>
     </Routes>
   );

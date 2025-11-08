@@ -210,6 +210,13 @@ const NavBar = () => {
             >
               Get Started
             </Link>
+
+            <Link
+              to="/log-in"
+              className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-medium hover:shadow-lg transition-shadow"
+            >
+              Login
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -286,6 +293,13 @@ const NavBar = () => {
               >
                 Get Started
               </Link>
+              {/* <Link
+                to="/log-in"
+                onClick={LoginDropdown}
+                className="block w-full mt-4 px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-medium text-center"
+              >
+                Log In
+              </Link> */}
             </div>
           </div>
         )}
