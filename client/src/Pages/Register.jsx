@@ -169,7 +169,7 @@ const onSubmit = async (data) => {
           Reset
         </Button>
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => navigate("/login")}>
+          <Button variant="secondary" onClick={() => navigate("/log-in")}>
             Back to Login
           </Button>
           <Button type="submit" form="register-form">
