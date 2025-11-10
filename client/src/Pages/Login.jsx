@@ -1,4 +1,4 @@
-// import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -21,6 +21,12 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loginStart,
+  loginFailure,
+  loginSuccess,
+} from "../redux/authSlice";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email."),
@@ -28,9 +34,17 @@ const formSchema = z.object({
 });
 
 const Login = () => {
+  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
-  // const [user, setUser] = useState(null);
+
+  // 🔹 Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -40,22 +54,9 @@ const Login = () => {
     },
   });
 
-  // 🔹 Fetch user info if already logged in
-  // useEffect(() => {
-  //   fetch(`${API_URL}/user-info`, { credentials: "include" })
-  //     .then((res) => (res.ok ? res.json() : null))
-  //     .then((data) => {
-  //       if (data) {
-  //         setUser(data);
-  //         toast.success("Welcome back!", { description: data.name });
-  //         navigate("/dashboard");
-  //       }
-  //     })
-  //     .catch(() => {});
-  // }, []);
-
-  // 🔹 Handle normal email/password login
+  // 🔹 Normal login
   const onSubmit = async (data) => {
+    dispatch(loginStart());
     try {
       const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
@@ -65,20 +66,43 @@ const Login = () => {
       });
 
       const result = await res.json();
+
       if (res.ok) {
-        toast.success("Login Successful", { description: `Welcome ${result.name}` });
+        toast.success("Login Successful", {
+          description: `Welcome ${result.name || result.email}`,
+        });
+
+        dispatch(
+          loginSuccess({
+            user: {
+              name: result.name || "User",
+              email: result.email,
+            },
+            token: result.token,
+          })
+        );
+
         localStorage.setItem("token", result.token);
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ name: result.name, email: result.email })
+        );
+
         navigate("/dashboard");
       } else {
         toast.error("Login Failed", {
-          description: result.message || "Invalid credentials",
+          description: result.error || result.message || "Invalid credentials",
         });
+        dispatch(
+          loginFailure(result.error || result.message || "Invalid credentials")
+        );
       }
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch (err) {
+      console.error("Login error:", err);
       toast.error("Network Error", {
         description: "Unable to reach the server",
       });
+      dispatch(loginFailure("Network Error: Unable to reach the server"));
     }
   };
 
@@ -87,19 +111,22 @@ const Login = () => {
     window.location.href = `${API_URL}/oauth2/authorization/google`;
   };
 
-
-
   return (
-    <Card className="w-full sm:max-w-md mx-auto mt-10">
+    <Card className="w-full sm:max-w-md mx-auto mt-10 shadow-lg border border-gray-200">
       <CardHeader>
-        <CardTitle>Login</CardTitle>
-        <CardDescription>Sign in to your account</CardDescription>
+        <CardTitle className="text-xl font-semibold text-center">
+          Login
+        </CardTitle>
+        <CardDescription className="text-center">
+          Sign in to your account
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
-        {/* 🔹 Normal Email/Password Login */}
+        {/* 🔹 Email & Password Login Form */}
         <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
+            {/* Email */}
             <Controller
               name="email"
               control={form.control}
@@ -107,11 +134,14 @@ const Login = () => {
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Email</FieldLabel>
                   <Input {...field} placeholder="you@example.com" />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
 
+            {/* Password */}
             <Controller
               name="password"
               control={form.control}
@@ -119,8 +149,12 @@ const Login = () => {
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Password</FieldLabel>
                   <Input {...field} type="password" placeholder="••••••••" />
-                  <FieldDescription>Enter your account password.</FieldDescription>
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <FieldDescription>
+                    Enter your account password.
+                  </FieldDescription>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -130,7 +164,7 @@ const Login = () => {
         {/* 🔹 Divider */}
         <div className="my-6 text-center text-sm text-gray-500">or</div>
 
-        {/* 🔹 Google & GitHub OAuth buttons */}
+        {/* 🔹 Google OAuth */}
         <div className="flex flex-col gap-3">
           <Button variant="outline" onClick={googleLogin}>
             Continue with Google
@@ -144,14 +178,24 @@ const Login = () => {
         </Button>
 
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => navigate("/register")}>
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => navigate("/register")}
+          >
             Register
           </Button>
-          <Button type="submit" form="login-form">
-            Login
+
+          <Button type="submit" form="login-form" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </Button>
         </div>
       </CardFooter>
+
+      {/* 🔹 Show error toast */}
+      {error && (
+        <p className="text-center text-red-500 text-sm pb-4">{error}</p>
+      )}
     </Card>
   );
 };

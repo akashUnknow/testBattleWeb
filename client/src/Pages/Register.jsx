@@ -20,7 +20,10 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginSuccess, loginFailure } from "../redux/authSlice"; // ✅ Import Redux actions
 
+// ✅ Zod schema validation
 const formSchema = z.object({
   name: z.string().min(2, "Name is required."),
   phoneNumber: z
@@ -33,6 +36,7 @@ const formSchema = z.object({
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const API_URL = import.meta.env.VITE_API_URL;
 
   const form = useForm({
@@ -44,41 +48,59 @@ const Register = () => {
       password: "",
     },
   });
-const onSubmit = async (data) => {
-  try {
-    const response = await fetch(`${API_URL}/api/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
 
-    const result = await response.json(); // Read once only
+  // ✅ Registration API call
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    if (response.ok) {
-      toast.success("Registration Successful!", {
-        description: "You can now log in.",
+      const result = await response.json();
+
+      if (response.ok) {
+        // ✅ Show success toast
+        toast.success("Registration Successful!", {
+          description: "Welcome to TestBattle!",
+          position: "bottom-right",
+        });
+
+        // ✅ Save token or session info
+        if (result.token) {
+          localStorage.setItem("token", result.token);
+          dispatch(
+            loginSuccess({
+              user: result.name,
+              email: result.email,
+              token: result.token,
+            })
+          );
+        }
+
+        // ✅ Navigate to dashboard or login
+        navigate("/dashboard");
+      } else {
+        // ❌ Handle backend error
+        const errorMessage = result.error || result.message || "Something went wrong!";
+        toast.error("Registration Failed", {
+          description: errorMessage,
+          position: "bottom-right",
+        });
+        dispatch(loginFailure(errorMessage));
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error("Network Error", {
+        description: "Unable to connect to the server.",
         position: "bottom-right",
       });
-      navigate("/dashboard");
-    } else {
-      // ✅ Handle backend error messages gracefully
-      toast.error("Registration Failed", {
-        description:
-          result.error || result.message || "Something went wrong!",
-        position: "bottom-right",
-      });
+      dispatch(loginFailure("Network Error: Unable to connect to the server"));
     }
-  } catch (error) {
-    console.error("Registration error:", error);
-    toast.error("Network Error", {
-      description: "Unable to connect to the server.",
-      position: "bottom-right",
-    });
-  }
-};
-
+  };
 
   return (
     <Card className="w-full sm:max-w-md mx-auto mt-10">
@@ -86,6 +108,7 @@ const onSubmit = async (data) => {
         <CardTitle>Register</CardTitle>
         <CardDescription>Create a new account</CardDescription>
       </CardHeader>
+
       <CardContent>
         <form id="register-form" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
