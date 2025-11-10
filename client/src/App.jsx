@@ -6,6 +6,7 @@ import Dashboard from "./Pages/Dashboard";
 import ExamDetail from "./Pages/ExamDetail";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
+import UpdateProfile from "./Pages/UpdateProfile";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="pass" element={<Dashboard />} />
         <Route path="log-in" element={<Login />} />
         <Route path="Register" element={<Register />} />
+        <Route path="/update-profile" element={<UpdateProfile />} />
       </Route>
     </Routes>
   );

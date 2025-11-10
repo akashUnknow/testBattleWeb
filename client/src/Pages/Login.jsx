@@ -77,6 +77,7 @@ const Login = () => {
             user: {
               name: result.name || "User",
               email: result.email,
+              userId: result.userId,
             },
             token: result.token,
           })
@@ -85,7 +86,7 @@ const Login = () => {
         localStorage.setItem("token", result.token);
         localStorage.setItem(
           "user",
-          JSON.stringify({ name: result.name, email: result.email })
+          JSON.stringify({ name: result.name, email: result.email ,userId: result.userId})
         );
 
         navigate("/dashboard");

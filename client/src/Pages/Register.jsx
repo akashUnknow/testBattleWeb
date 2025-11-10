@@ -76,6 +76,7 @@ const Register = () => {
             loginSuccess({
               user: result.name,
               email: result.email,
+              userId: result.userId,
               token: result.token,
             })
           );

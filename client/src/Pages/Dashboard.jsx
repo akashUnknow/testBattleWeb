@@ -9,34 +9,34 @@ const DashBoard = () => {
   const dispatch = useDispatch();
   const API_URL = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/user-info`, { withCredentials: true })
-      .then((response) => {
-        setUser(response.data);
-        console.log("✅ User data fetched:", response.data);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}/user-info`, { withCredentials: true })
+  //     .then((response) => {
+  //       setUser(response.data);
+  //       console.log("✅ User data fetched:", response.data);
 
-        // ✅ Update Redux + LocalStorage when Google login happened
-        dispatch(
-          loginSuccess({
-            user: {
-              name: response.data.name,
-              email: response.data.email,
-            },
-            token: "oauth-session", // fake token placeholder
-          })
-        );
+  //       // ✅ Update Redux + LocalStorage when Google login happened
+  //       dispatch(
+  //         loginSuccess({
+  //           user: {
+  //             name: response.data.name,
+  //             email: response.data.email,
+  //           },
+  //           token: "oauth-session", // fake token placeholder
+  //         })
+  //       );
 
-        localStorage.setItem("user", JSON.stringify(response.data));
-        localStorage.setItem("token", "oauth-session");
+  //       localStorage.setItem("user", JSON.stringify(response.data));
+  //       localStorage.setItem("token", "oauth-session");
 
-        toast.success(`Welcome ${response.data.name || "User"}!`);
-      })
-      .catch((error) => {
-        console.error("❌ Error fetching user data:", error);
-        toast.error("Failed to fetch user info");
-      });
-  }, [dispatch, API_URL]);
+  //       toast.success(`Welcome ${response.data.name || "User"}!`);
+  //     })
+  //     .catch((error) => {
+  //       console.error("❌ Error fetching user data:", error);
+  //       toast.error("Failed to fetch user info");
+  //     });
+  // }, [dispatch, API_URL]);
 
   return (
     <div className="p-6">

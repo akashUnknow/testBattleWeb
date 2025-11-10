@@ -16,6 +16,7 @@ import { logout } from "../redux/authSlice";
 const NavBar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -144,21 +145,43 @@ const NavBar = () => {
             </button>
 
             {isAuthenticated ? (
-              <>
-                <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-gray-100">
-                  <User className="w-4 h-4 text-cyan-600" />
-                  <span className="text-sm text-gray-700 font-medium">
-                    {user?.name || "User"}
-                  </span>
-                </div>
-
+              <div className="relative">
                 <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 flex items-center gap-2"
+                  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                  className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200"
                 >
-                  <LogOut className="w-4 h-4" /> Logout
+                  <User className="w-4 h-4 text-cyan-600" />
+                  <span className="text-sm text-gray-700 font-medium cursor-pointer">
+                    Hi, {user?.name || "User"}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      profileMenuOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
-              </>
+
+                {profileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border border-gray-100 z-50">
+                    <Link
+                      to="/update-profile"
+                      onClick={() => setProfileMenuOpen(false)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-cyan-50"
+                    >
+                      Update Profile
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setProfileMenuOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <Link
@@ -223,6 +246,13 @@ const NavBar = () => {
                   <p className="px-4 text-gray-700 text-sm font-medium">
                     Hi, {user?.name || "User"}
                   </p>
+                  <Link
+                    to="/update-profile"
+                    onClick={closeDropdown}
+                    className="block w-full mt-2 px-6 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium text-center"
+                  >
+                    Update Profile
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="block w-full mt-2 px-6 py-2 bg-red-500 text-white rounded-lg font-medium text-center"
