@@ -27,6 +27,7 @@ import {
   loginFailure,
   loginSuccess,
 } from "../redux/authSlice";
+import { is } from "zod/v4/locales";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email."),
@@ -78,6 +79,7 @@ const Login = () => {
               name: result.name || "User",
               email: result.email,
               userId: result.userId,
+              isVerified: result.isVerified,
             },
             token: result.token,
           })

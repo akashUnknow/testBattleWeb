@@ -6,7 +6,6 @@ import {
   GraduationCap,
   Menu,
   X,
-  LogOut,
   User,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -53,14 +52,22 @@ const NavBar = () => {
     ],
   };
 
-  const handleMouseEnter = (dropdown) => setActiveDropdown(dropdown);
-  const handleMouseLeave = () => setActiveDropdown(null);
+  // Delay for smoother hover experience
+  const [timeoutId, setTimeoutId] = useState(null);
+  const handleMouseEnter = (dropdown) => {
+    clearTimeout(timeoutId);
+    setActiveDropdown(dropdown);
+  };
+  const handleMouseLeave = () => {
+    const id = setTimeout(() => setActiveDropdown(null), 200);
+    setTimeoutId(id);
+  };
+
   const closeDropdown = () => {
     setActiveDropdown(null);
     setMobileMenuOpen(false);
   };
 
-  // 🔹 Logout
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("token");
@@ -97,43 +104,53 @@ const NavBar = () => {
                 />
               </button>
 
-              {activeDropdown === "exams" && (
-                <div className="absolute left-0 top-full mt-2 w-screen max-w-5xl bg-white rounded-lg shadow-2xl border border-gray-100 p-6 z-50">
-                  <div className="grid grid-cols-3 gap-6">
-                    {Object.entries(examCategories).map(([category, exams]) => (
-                      <div key={category} className="space-y-3">
-                        <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wide flex items-center space-x-2 pb-2 border-b border-gray-200">
-                          <GraduationCap className="w-4 h-4 text-cyan-500" />
-                          <span>{category}</span>
-                        </h3>
-                        <ul className="space-y-2">
-                          {exams.map((exam) => (
-                            <li key={exam.name}>
-                              <Link
-                                to={exam.path}
-                                onClick={closeDropdown}
-                                className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-cyan-50 transition-colors group"
-                              >
-                                <span className="text-lg">{exam.icon}</span>
-                                <span className="text-sm text-gray-600 group-hover:text-cyan-600 transition-colors">
-                                  {exam.name}
-                                </span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
+              <div
+                className={`absolute left-0 top-full mt-2 w-screen max-w-5xl bg-white rounded-lg shadow-2xl border border-gray-100 p-6 z-50 transition-all duration-200 ${
+                  activeDropdown === "exams"
+                    ? "opacity-100 visible"
+                    : "opacity-0 invisible"
+                }`}
+              >
+                <div className="grid grid-cols-3 gap-6">
+                  {Object.entries(examCategories).map(([category, exams]) => (
+                    <div key={category} className="space-y-3">
+                      <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wide flex items-center space-x-2 pb-2 border-b border-gray-200">
+                        <GraduationCap className="w-4 h-4 text-cyan-500" />
+                        <span>{category}</span>
+                      </h3>
+                      <ul className="space-y-2">
+                        {exams.map((exam) => (
+                          <li key={exam.name}>
+                            <Link
+                              to={exam.path}
+                              onClick={closeDropdown}
+                              className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-cyan-50 transition-colors group"
+                            >
+                              <span className="text-lg">{exam.icon}</span>
+                              <span className="text-sm text-gray-600 group-hover:text-cyan-600 transition-colors">
+                                {exam.name}
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Static Nav Items */}
-            <Link to="/test-series" className="px-4 py-2 hover:bg-gray-100 rounded-lg text-gray-700 font-medium">
+            <Link
+              to="/test-series"
+              className="px-4 py-2 hover:bg-gray-100 rounded-lg text-gray-700 font-medium"
+            >
               Test Series
             </Link>
-            <Link to="/skill-academy" className="px-4 py-2 hover:bg-gray-100 rounded-lg text-gray-700 font-medium">
+            <Link
+              to="/skill-academy"
+              className="px-4 py-2 hover:bg-gray-100 rounded-lg text-gray-700 font-medium"
+            >
               Skill Academy
             </Link>
           </div>

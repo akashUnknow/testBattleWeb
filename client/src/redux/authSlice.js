@@ -22,6 +22,8 @@ const authSlice = createSlice({
       state.userId=userId;
       state.email = email;
       state.token = token;
+      state.isVerified = user.isVerified;
+      state.phoneNumber = user.phoneNumber;
       state.isAuthenticated = true;
       state.loading = false;
       localStorage.setItem('user', JSON.stringify(user));
