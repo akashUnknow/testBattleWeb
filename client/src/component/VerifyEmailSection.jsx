@@ -6,11 +6,14 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateVerification } from "../redux/authSlice";
+import { toast } from "sonner";
 
 
 export default function VerifyEmailSection() {
+  const API_URL = import.meta.env.VITE_API_URL;
+   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   // const[isVerified, setIsVerified] = useState(false);
   const [otp, setOtp] = useState("") // will store 6 digits
@@ -25,19 +28,23 @@ export default function VerifyEmailSection() {
 
     // Example: call backend API for verification
     try {
-      const res = await fetch("http://localhost:8080/api/verify-otp", {
+      const res = await fetch(`${API_URL}/api/auth/verify-otp?email=${user.email}&otp=${otp}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ otp }),
+        // body: JSON.stringify({ otp }),
       })
       const data = await res.json()
+
       console.log("Server response:", data)
-      if (data.success) {
+      if (data.isVerified) {
+        toast.success("Email verified successfully!")
         dispatch(updateVerification(true));
       } else {
+        toast.error("Invalid OTP. Please try again.")
         alert("Invalid OTP. Please try again.")
       }
     } catch (err) {
+      toast.error("Error verifying OTP. Please try again later.")
       console.error("Error verifying OTP:", err)
     }
   }
