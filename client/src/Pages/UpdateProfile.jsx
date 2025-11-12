@@ -7,7 +7,19 @@ import { Button } from "@/components/ui/button";
 import z from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import { User, Award, FileText, Settings, Mail, Phone, Trophy, Target, Hash } from "lucide-react";
+import {
+  User,
+  Award,
+  FileText,
+  Settings,
+  Mail,
+  Phone,
+  Trophy,
+  Target,
+  Hash,
+} from "lucide-react";
+import VerifyEmailSection from "../component/VerifyEmailSection";
+
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -24,6 +36,7 @@ const UpdateProfile = () => {
   const user = useSelector((state) => state.auth.user);
   const userId = user?.userId;
   const [loading, setLoading] = useState(false);
+  const [OtpField, setOtpField] = useState(null);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -36,6 +49,32 @@ const UpdateProfile = () => {
       rank: 0,
     },
   });
+  // const handleSubmitOtp = async () => {
+  //   // Implement OTP submission logic here
+  // };
+
+  const handleSendVerificationEmail = async () => {
+    setOtpField(true);
+    try {
+      const response = await fetch(
+        `${API_URL}/api/users/send-verification-email`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: user.email }),
+        }
+      );
+      
+      if (response.ok) {
+        alert("✅ Verification email sent! Please check your inbox.");
+      } else {
+        alert("❌ Failed to send verification email. Please try again later.");
+      }
+    } catch (error) {
+      console.log("❌ Error sending verification email:", error);
+      alert("❌ An error occurred. Please try again later.");
+    }
+  };
 
   useEffect(() => {
     if (!userId) return;
@@ -76,9 +115,9 @@ const UpdateProfile = () => {
       };
 
       const response = await fetch(`${API_URL}/api/users/${userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
       const result = await response.json();
       dispatch(updateUser({ ...user, ...result }));
@@ -149,7 +188,9 @@ const UpdateProfile = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <Trophy className="w-8 h-8 opacity-80" />
-                    <span className="text-3xl font-bold">{form.watch("totalScore")}</span>
+                    <span className="text-3xl font-bold">
+                      {form.watch("totalScore")}
+                    </span>
                   </div>
                   <p className="text-blue-100 font-medium">Total Score</p>
                 </CardContent>
@@ -159,7 +200,9 @@ const UpdateProfile = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <Target className="w-8 h-8 opacity-80" />
-                    <span className="text-3xl font-bold">{form.watch("testsCompleted")}</span>
+                    <span className="text-3xl font-bold">
+                      {form.watch("testsCompleted")}
+                    </span>
                   </div>
                   <p className="text-indigo-100 font-medium">Tests Completed</p>
                 </CardContent>
@@ -169,7 +212,9 @@ const UpdateProfile = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <Hash className="w-8 h-8 opacity-80" />
-                    <span className="text-3xl font-bold">{form.watch("rank")}</span>
+                    <span className="text-3xl font-bold">
+                      {form.watch("rank")}
+                    </span>
                   </div>
                   <p className="text-purple-100 font-medium">Your Rank</p>
                 </CardContent>
@@ -185,7 +230,10 @@ const UpdateProfile = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-8">
-                <div onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-6"
+                >
                   {/* Email */}
                   <div className="group">
                     <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
@@ -203,7 +251,9 @@ const UpdateProfile = () => {
                         />
                       )}
                     />
-                    <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Email cannot be changed
+                    </p>
                   </div>
 
                   {/* Name */}
@@ -285,8 +335,12 @@ const UpdateProfile = () => {
             <CardContent className="p-8">
               <div className="text-center py-12">
                 <Award className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">Exam Stats Coming Soon</h3>
-                <p className="text-gray-500">Detailed analytics and performance metrics will appear here</p>
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                  Exam Stats Coming Soon
+                </h3>
+                <p className="text-gray-500">
+                  Detailed analytics and performance metrics will appear here
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -308,8 +362,12 @@ const UpdateProfile = () => {
                     <Mail className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-500 mb-1">Mobile Number </p>
-                    <p className="text-gray-900 font-medium">{form.watch("phoneNumber")}</p>
+                    <p className="text-sm font-semibold text-gray-500 mb-1">
+                      Mobile Number{" "}
+                    </p>
+                    <p className="text-gray-900 font-medium">
+                      {form.watch("phoneNumber")}
+                    </p>
                   </div>
                 </div>
 
@@ -318,33 +376,55 @@ const UpdateProfile = () => {
                     <Phone className="w-5 h-5 text-green-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-500 mb-1">Email Address</p>
+                    <p className="text-sm font-semibold text-gray-500 mb-1">
+                      Email Address
+                    </p>
                     <p className="text-gray-900 font-medium">{user?.email}</p>
-                   { user?.isVerified ? (
-                    <p className="text-sm text-green-600 font-medium mt-1">Verified ✔️</p>
-                   ) : (
-                    <div>
-                      <p className="text-sm text-red-600 font-medium mt-1">Not Verified ❌</p>
+                    {user?.isVerified ? (
+                      <p className="text-sm text-green-600 font-medium mt-1">
+                        Verified ✔️
+                      </p>
+                    ) : (
+                      <div>
+                        <p className="text-sm text-red-600 font-medium mt-1">
+                          Not Verified ❌
+                        </p>
+                        {OtpField ? (
+                          <div className="mt-2">
+                            <VerifyEmailSection />
                       
-                    </div>
-                    
-                   )}
+                          </div>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            className="mt-2 bg-green-500 hover:bg-green-600 text-white font-medium h-10 px-4 rounded-lg shadow-md shadow-green-200"
+                            onClick={handleSendVerificationEmail}
+                          >
+                            Send Verification Email
+                          </Button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
-
               </CardContent>
             </Card>
 
             <Card className="border-0 shadow-xl shadow-red-100/50 border-red-100">
               <CardHeader className="border-b bg-gradient-to-r from-red-50 to-orange-50">
-                <CardTitle className="text-xl text-red-600">Danger Zone</CardTitle>
+                <CardTitle className="text-xl text-red-600">
+                  Danger Zone
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-8">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-1">Delete Account</h4>
+                    <h4 className="font-semibold text-gray-900 mb-1">
+                      Delete Account
+                    </h4>
                     <p className="text-sm text-gray-600">
-                      Permanently delete your account and all associated data. This action cannot be undone.
+                      Permanently delete your account and all associated data.
+                      This action cannot be undone.
                     </p>
                   </div>
                   <Button

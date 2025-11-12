@@ -98,14 +98,14 @@ const NavBar = () => {
               <button className="flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">
                 <span className="font-medium text-gray-700">Exams</span>
                 <ChevronDown
-                  className={`w-4 h-4 transition-transform ${
+                  className={`w-2 h-2 transition-transform ${
                     activeDropdown === "exams" ? "rotate-180" : ""
                   }`}
                 />
               </button>
 
               <div
-                className={`absolute left-0 top-full mt-2 w-screen max-w-5xl bg-white rounded-lg shadow-2xl border border-gray-100 p-6 z-50 transition-all duration-200 ${
+                className={`absolute left-0 top-full mt-2 w-screen max-w-xl bg-white rounded-lg shadow-2xl border border-gray-100 p-6 z-50 transition-all duration-200 ${
                   activeDropdown === "exams"
                     ? "opacity-100 visible"
                     : "opacity-0 invisible"
