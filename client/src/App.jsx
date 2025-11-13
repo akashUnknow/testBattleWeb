@@ -8,8 +8,9 @@ import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import UpdateProfile from "./Pages/UpdateProfile";
 import CompetitiveExam from "./Pages/CompetitiveExam";
-import Instructions from "./component/exam/Instructions";
+
 import InstructionsCAm from "./component/exam/InstructionsCAm";
+import Instructions from "./Pages/Exam/Instructions";
 
 function App() {
   return (
@@ -26,9 +27,10 @@ function App() {
         <Route path="Register" element={<Register />} />
         <Route path="/update-profile" element={<UpdateProfile />} />
       </Route>
-        <Route path="CompetitiveExam" element={<CompetitiveExam />} />
-        <Route path="instructions" element={< Instructions />} /> 
-        <Route path="InstructionsCAm" element={< InstructionsCAm />} /> 
+      <Route path="CompetitiveExam" element={<CompetitiveExam />} />
+      <Route path="exams/:examName/instructions" element={<Instructions />} />
+      <Route path="exams/:examName/instructionsCAm" element={<InstructionsCAm />} />
+      <Route path="exam-detail" element={<ExamDetail />} />
     </Routes>
   );
 }

@@ -7,10 +7,17 @@ import {
   ArrowLeft,
   ArrowRight,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation, useParams } from "react-router-dom";
 import React from "react";
 
 const Instructions = () => {
+  const location = useLocation();
+const { name, duration, totalQuestions, maxMarks } = location.state || {
+  name: "Unknown Exam",
+  duration: "N/A",
+  totalQuestions: 0,
+  maxMarks: 0,
+};
   const navigate = useNavigate();
   const statusItems = [
     { icon: "🔵", label: "Not Visited", color: "text-blue-600" },
@@ -19,10 +26,13 @@ const Instructions = () => {
     { icon: "🟣", label: "Marked for Review", color: "text-purple-600" },
     { icon: "✅", label: "Answered & Marked", color: "text-emerald-600" },
   ];
+const { examName } = useParams();
 
-  const handelNext = () => {
-    navigate("/InstructionsCAm");
-  };
+const handelNext = () => {
+  navigate(`/exams/${examName}/InstructionsCAm`, {
+    state: { name, duration, totalQuestions, maxMarks },
+  });
+};
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex flex-col">
       {/* Header */}
@@ -40,7 +50,7 @@ const Instructions = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="flex-grow max-w-5xl mx-auto px-6 py-8">
+      <div className="flex-grow max-w-full mt-2">
         {/* Top Info Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-6 border border-gray-100">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">
@@ -58,7 +68,7 @@ const Instructions = () => {
                   Total Questions
                 </span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{}</p>
+              <p className="text-2xl font-bold text-gray-900">{totalQuestions}</p>
             </div>
 
             <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-100">
@@ -70,7 +80,7 @@ const Instructions = () => {
                   Time Duration
                 </span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">30 Minutes</p>
+              <p className="text-2xl font-bold text-gray-900">{duration}</p>
             </div>
 
             <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100">

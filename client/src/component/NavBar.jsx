@@ -11,53 +11,23 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
+import { examCategories } from "../data/examData";
 
 const NavBar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
+
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const examCategories = {
-    "SSC Exams": [
-      { name: "Delhi Police Constable", icon: "👮", path: "/exams/delhi-police-constable" },
-      { name: "SSC CGL", icon: "🎯", path: "/exams/ssc-cgl" },
-      { name: "SSC GD Constable", icon: "👮", path: "/exams/ssc-gd-constable" },
-      { name: "SSC MTS", icon: "🎯", path: "/exams/ssc-mts" },
-      { name: "SSC CPO", icon: "👮", path: "/exams/ssc-cpo" },
-      { name: "SSC CHSL", icon: "🎯", path: "/exams/ssc-chsl" },
-      { name: "SSC Head Constable", icon: "👮", path: "/exams/ssc-head-constable" },
-      { name: "Delhi Police Head Constable", icon: "👮", path: "/exams/delhi-police-head-constable" },
-      { name: "SSC Stenographer", icon: "📝", path: "/exams/ssc-stenographer" },
-      { name: "Delhi Police MTS", icon: "👮", path: "/exams/delhi-police-mts" },
-      { name: "IB Security Assistant", icon: "🛡️", path: "/exams/ib-security-assistant" },
-      { name: "SSC Selection Post", icon: "🎯", path: "/exams/ssc-selection-post" },
-      { name: "SSC JE CE", icon: "⚙️", path: "/exams/ssc-je-ce" },
-      { name: "SSC JE EE", icon: "⚡", path: "/exams/ssc-je-ee" },
-      { name: "SSC JHT", icon: "🌐", path: "/exams/ssc-jht" },
-      { name: "SSC JE ME", icon: "🔧", path: "/exams/ssc-je-me" },
-      { name: "SSC Scientific Assistant", icon: "🔬", path: "/exams/ssc-scientific-assistant" },
-    ],
-    "Banking Exams": [
-      { name: "IBPS PO", icon: "🏦", path: "/exams/ibps-po" },
-      { name: "SBI Clerk", icon: "🏦", path: "/exams/sbi-clerk" },
-      { name: "RBI Grade B", icon: "🏦", path: "/exams/rbi-grade-b" },
-    ],
-    "Railway Exams": [
-      { name: "RRB NTPC", icon: "🚂", path: "/exams/rrb-ntpc" },
-      { name: "RRB Group D", icon: "🚂", path: "/exams/rrb-group-d" },
-      { name: "RRB ALP", icon: "🚂", path: "/exams/rrb-alp" },
-    ],
-  };
-
-  // Delay for smoother hover experience
-  const [timeoutId, setTimeoutId] = useState(null);
   const handleMouseEnter = (dropdown) => {
     clearTimeout(timeoutId);
     setActiveDropdown(dropdown);
   };
+
   const handleMouseLeave = () => {
     const id = setTimeout(() => setActiveDropdown(null), 200);
     setTimeoutId(id);
@@ -124,12 +94,20 @@ const NavBar = () => {
                             <Link
                               to={exam.path}
                               onClick={closeDropdown}
-                              className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-cyan-50 transition-colors group"
+                              state={{
+                                name: exam.name,
+                                duration: exam.duration,
+                                totalQuestions: exam.totalQuestions,
+                                maxMarks: exam.maxMarks,
+                              }}
+                              className="flex items-center justify-between px-3 py-2 rounded-md hover:bg-cyan-50 transition-colors group"
                             >
-                              <span className="text-lg">{exam.icon}</span>
-                              <span className="text-sm text-gray-600 group-hover:text-cyan-600 transition-colors">
-                                {exam.name}
-                              </span>
+                              <div className="flex items-center space-x-2">
+                                <span className="text-lg">{exam.icon}</span>
+                                <span className="text-sm text-gray-600 group-hover:text-cyan-600 transition-colors">
+                                  {exam.name}
+                                </span>
+                              </div>
                             </Link>
                           </li>
                         ))}
@@ -222,82 +200,13 @@ const NavBar = () => {
             className="md:hidden p-2 rounded-lg hover:bg-gray-100"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <div className="space-y-2">
-              <details className="group">
-                <summary className="px-4 py-2 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 rounded-lg flex items-center justify-between">
-                  Exams
-                  <ChevronDown className="w-4 h-4 group-open:rotate-180 transition-transform" />
-                </summary>
-                <div className="mt-2 space-y-4 px-4 max-h-96 overflow-y-auto">
-                  {Object.entries(examCategories).map(([category, exams]) => (
-                    <div key={category}>
-                      <h4 className="font-semibold text-sm text-gray-900 mb-2">{category}</h4>
-                      <ul className="space-y-1 ml-4">
-                        {exams.map((exam) => (
-                          <li key={exam.name}>
-                            <Link
-                              to={exam.path}
-                              onClick={closeDropdown}
-                              className="text-sm text-gray-600 hover:text-cyan-600 flex items-center space-x-2 py-1"
-                            >
-                              <span>{exam.icon}</span>
-                              <span>{exam.name}</span>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </details>
-
-              {isAuthenticated ? (
-                <>
-                  <p className="px-4 text-gray-700 text-sm font-medium">
-                    Hi, {user?.name || "User"}
-                  </p>
-                  <Link
-                    to="/update-profile"
-                    onClick={closeDropdown}
-                    className="block w-full mt-2 px-6 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium text-center"
-                  >
-                    Update Profile
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full mt-2 px-6 py-2 bg-red-500 text-white rounded-lg font-medium text-center"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/register"
-                    onClick={closeDropdown}
-                    className="block w-full mt-4 px-6 py-2 border border-cyan-500 text-cyan-600 rounded-lg font-medium text-center"
-                  >
-                    Register
-                  </Link>
-                  <Link
-                    to="/log-in"
-                    onClick={closeDropdown}
-                    className="block w-full mt-2 px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-medium text-center"
-                  >
-                    Login
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </nav>
   );

@@ -1,23 +1,45 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { BookOpen, Calendar, Users, Award } from 'lucide-react';
+// import React, { useEffect } from "react";
+import { useNavigate, useParams ,useLocation } from "react-router-dom";
+import { BookOpen, Calendar, Users, Award } from "lucide-react";
 
 const ExamDetail = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { examName } = useParams();
 
   // Format the exam name for display
   const formattedExamName = examName
-    .split('-')
-    .map(word => word.toUpperCase())
-    .join(' ');
+    .split("-")
+    .map((word) => word.toUpperCase())
+    .join(" ");
+  const handleEnrollNow = () => {
+    navigate(`/exams/${examName}/instructions`,{
+      state: {
+        name: location.state?.name,
+        duration: location.state?.duration,
+        totalQuestions: location.state?.totalQuestions,
+        maxMarks: location.state?.maxMarks,
+      },
+    });
+  };
 
+  // const { name, duration, totalQuestions, maxMarks } = location.state || {
+  //   examName: null,
+  //   duration: null,
+  //   totalQuestions: null,
+  // };
+
+  // useEffect(() => {
+  //   console.log("Exam Details:", { name, duration, totalQuestions, maxMarks });
+  // }, [name, duration, totalQuestions, maxMarks]);
   return (
     <div className="max-w-6xl mx-auto">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-2xl p-8 mb-8">
         <h1 className="text-4xl font-bold mb-4">{formattedExamName}</h1>
         <p className="text-xl opacity-90">
-          Complete preparation guide and resources for {formattedExamName} examination
+          Complete preparation guide and resources for {formattedExamName}{" "}
+          examination
         </p>
       </div>
 
@@ -77,14 +99,18 @@ const ExamDetail = () => {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-xl shadow-md p-6">
-            <h2 className="text-2xl font-bold mb-4">About {formattedExamName}</h2>
+            <h2 className="text-2xl font-bold mb-4">
+              About {formattedExamName}
+            </h2>
             <p className="text-gray-600 leading-relaxed mb-4">
-              The {formattedExamName} is one of the most prestigious competitive examinations 
-              conducted for recruitment in various government departments and organizations.
+              The {formattedExamName} is one of the most prestigious competitive
+              examinations conducted for recruitment in various government
+              departments and organizations.
             </p>
             <p className="text-gray-600 leading-relaxed">
-              This examination tests candidates on various subjects including General Knowledge, 
-              Reasoning, Quantitative Aptitude, and English Language.
+              This examination tests candidates on various subjects including
+              General Knowledge, Reasoning, Quantitative Aptitude, and English
+              Language.
             </p>
           </div>
 
@@ -114,20 +140,33 @@ const ExamDetail = () => {
             <h2 className="text-2xl font-bold mb-4">Syllabus</h2>
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold text-lg mb-2">General Knowledge</h3>
-                <p className="text-gray-600">Current Affairs, History, Geography, Indian Polity, Economics</p>
+                <h3 className="font-semibold text-lg mb-2">
+                  General Knowledge
+                </h3>
+                <p className="text-gray-600">
+                  Current Affairs, History, Geography, Indian Polity, Economics
+                </p>
               </div>
               <div>
                 <h3 className="font-semibold text-lg mb-2">Reasoning</h3>
-                <p className="text-gray-600">Logical Reasoning, Analytical Reasoning, Verbal & Non-Verbal Reasoning</p>
+                <p className="text-gray-600">
+                  Logical Reasoning, Analytical Reasoning, Verbal & Non-Verbal
+                  Reasoning
+                </p>
               </div>
               <div>
-                <h3 className="font-semibold text-lg mb-2">Quantitative Aptitude</h3>
-                <p className="text-gray-600">Arithmetic, Algebra, Geometry, Data Interpretation</p>
+                <h3 className="font-semibold text-lg mb-2">
+                  Quantitative Aptitude
+                </h3>
+                <p className="text-gray-600">
+                  Arithmetic, Algebra, Geometry, Data Interpretation
+                </p>
               </div>
               <div>
                 <h3 className="font-semibold text-lg mb-2">English Language</h3>
-                <p className="text-gray-600">Grammar, Vocabulary, Comprehension, Writing Skills</p>
+                <p className="text-gray-600">
+                  Grammar, Vocabulary, Comprehension, Writing Skills
+                </p>
               </div>
             </div>
           </div>
@@ -155,8 +194,11 @@ const ExamDetail = () => {
                 <span>Expert Guidance</span>
               </li>
             </ul>
-            <button className="w-full bg-white text-cyan-600 font-bold py-3 rounded-lg hover:shadow-xl transition-shadow">
-              Enroll Now
+            <button
+              onClick={handleEnrollNow}
+              className="w-full bg-white text-cyan-600 font-bold py-3 rounded-lg hover:shadow-xl transition-shadow"
+            >
+              Start Now
             </button>
           </div>
 
@@ -164,19 +206,29 @@ const ExamDetail = () => {
             <h3 className="text-xl font-bold mb-4">Important Links</h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-cyan-600 hover:underline">Official Notification</a>
+                <a href="#" className="text-cyan-600 hover:underline">
+                  Official Notification
+                </a>
               </li>
               <li>
-                <a href="#" className="text-cyan-600 hover:underline">Previous Year Papers</a>
+                <a href="#" className="text-cyan-600 hover:underline">
+                  Previous Year Papers
+                </a>
               </li>
               <li>
-                <a href="#" className="text-cyan-600 hover:underline">Admit Card</a>
+                <a href="#" className="text-cyan-600 hover:underline">
+                  Admit Card
+                </a>
               </li>
               <li>
-                <a href="#" className="text-cyan-600 hover:underline">Result</a>
+                <a href="#" className="text-cyan-600 hover:underline">
+                  Result
+                </a>
               </li>
               <li>
-                <a href="#" className="text-cyan-600 hover:underline">Cut Off Marks</a>
+                <a href="#" className="text-cyan-600 hover:underline">
+                  Cut Off Marks
+                </a>
               </li>
             </ul>
           </div>

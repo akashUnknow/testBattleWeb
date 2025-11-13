@@ -1,9 +1,16 @@
 import { BookOpen } from "lucide-react";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
-const InstructionsCAm = ({duration,maxMarks,totalQuestions}) => {
+const InstructionsCAm = () => {
+  const location = useLocation();
+const { name, duration, totalQuestions, maxMarks } = location.state || {
+  name: "Unknown Exam",
+  duration: "N/A",
+  totalQuestions: 0,
+  maxMarks: 0,
+};
   const [accepted, setAccepted] = useState(false);
   return (
     <div>
@@ -25,7 +32,7 @@ const InstructionsCAm = ({duration,maxMarks,totalQuestions}) => {
           {/* Header */}
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-indigo-700">
-              RRB NTPC Graduate Level Full Test - 01
+              {name}
             </h2>
           </div>
 
