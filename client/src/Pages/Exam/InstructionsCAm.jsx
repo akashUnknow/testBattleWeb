@@ -1,9 +1,10 @@
 import { BookOpen } from "lucide-react";
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 const InstructionsCAm = () => {
+  const navigate = useNavigate();
   const location = useLocation();
 const { name, duration, totalQuestions, maxMarks } = location.state || {
   name: "Unknown Exam",
@@ -11,6 +12,10 @@ const { name, duration, totalQuestions, maxMarks } = location.state || {
   totalQuestions: 0,
   maxMarks: 0,
 };
+const { examName } = useParams();
+const handleSubmit = () => {
+  navigate(`/exams/${examName}/test`, { state: { name, duration, totalQuestions, maxMarks } } );
+}
   const [accepted, setAccepted] = useState(false);
   return (
     <div>
@@ -91,6 +96,7 @@ const { name, duration, totalQuestions, maxMarks } = location.state || {
           {/* Start Button */}
           <div className="flex justify-end mt-6">
             <button
+            onClick={handleSubmit}
               disabled={!accepted}
               className={`flex items-center gap-2 px-6 py-2 font-semibold rounded-xl transition ${
                 accepted
