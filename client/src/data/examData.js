@@ -1,4 +1,3 @@
-// src/data/examData.js
 export const examCategories = {
   "SSC Exams": [
     {
@@ -8,7 +7,15 @@ export const examCategories = {
       duration: "90 minutes",
       totalQuestions: 100,
       maxMarks: 100,
+      id: 101,
+      sections: [
+        { name: "Reasoning", questions: 25, id: 1 },
+        { name: "GK", questions: 25, id: 2 },
+        { name: "Maths", questions: 25, id: 3 },
+        { name: "Delhi Police Constable", questions: 25, id: 4 },
+      ],
     },
+
     {
       name: "SSC CGL",
       icon: "🎯",
@@ -16,7 +23,15 @@ export const examCategories = {
       duration: "120 minutes",
       totalQuestions: 200,
       maxMarks: 200,
+      id: 102,
+      sections: [
+        { name: "Reasoning", questions: 25, id: 1 },
+        { name: "GK", questions: 25, id: 2 },
+        { name: "Maths", questions: 25, id: 3 },
+        { name: "Computer", questions: 25, id: 4 },
+      ],
     },
+
     {
       name: "SSC GD Constable",
       icon: "👮",
@@ -24,7 +39,15 @@ export const examCategories = {
       duration: "90 minutes",
       totalQuestions: 100,
       maxMarks: 100,
+      id: 103,
+      sections: [
+        { name: "Reasoning", questions: 25, id: 1 },
+        { name: "GK", questions: 25, id: 2 },
+        { name: "Maths", questions: 25, id: 3 },
+        { name: "Computer", questions: 25, id: 4 },
+      ],
     },
+
     {
       name: "SSC MTS",
       icon: "🎯",
@@ -32,7 +55,15 @@ export const examCategories = {
       duration: "90 minutes",
       totalQuestions: 100,
       maxMarks: 100,
+      id: 104,
+      sections: [
+        { name: "Reasoning", questions: 25, id: 1 },
+        { name: "GK", questions: 25, id: 2 },
+        { name: "Maths", questions: 25, id: 3 },
+        { name: "Computer", questions: 25, id: 4 },
+      ],
     },
+
     {
       name: "SSC CHSL",
       icon: "🎯",
@@ -40,8 +71,15 @@ export const examCategories = {
       duration: "60 minutes",
       totalQuestions: 100,
       maxMarks: 200,
+      id: 105,
+      sections: [
+        { name: "Reasoning", questions: 25, id: 1 },
+        { name: "GK", questions: 25, id: 2 },
+        { name: "Maths", questions: 25, id: 3 },
+      ],
     },
   ],
+
   "Banking Exams": [
     {
       name: "IBPS PO",
@@ -50,7 +88,15 @@ export const examCategories = {
       duration: "120 minutes",
       totalQuestions: 100,
       maxMarks: 100,
+      id: 201,
+      sections: [
+        { name: "Reasoning", questions: 25, id: 1 },
+        { name: "GK", questions: 25, id: 2 },
+        { name: "Maths", questions: 25, id: 3 },
+        { name: "Computer", questions: 25, id: 4 },
+      ],
     },
+
     {
       name: "SBI Clerk",
       icon: "🏦",
@@ -58,7 +104,15 @@ export const examCategories = {
       duration: "90 minutes",
       totalQuestions: 100,
       maxMarks: 100,
+      id: 202,
+      sections: [
+        { name: "Reasoning", questions: 25, id: 1 },
+        { name: "GK", questions: 25, id: 2 },
+        { name: "Maths", questions: 25, id: 3 },
+        { name: "Computer", questions: 25, id: 4 },
+      ],
     },
+
     {
       name: "RBI Grade B",
       icon: "🏦",
@@ -66,8 +120,16 @@ export const examCategories = {
       duration: "120 minutes",
       totalQuestions: 200,
       maxMarks: 200,
+      id: 203,
+      sections: [
+        { name: "Reasoning", questions: 25, id: 1 },
+        { name: "GK", questions: 25, id: 2 },
+        { name: "Maths", questions: 25, id: 3 },
+        { name: "Computer", questions: 25, id: 4 },
+      ],
     },
   ],
+
   "Railway Exams": [
     {
       name: "RRB NTPC",
@@ -76,7 +138,15 @@ export const examCategories = {
       duration: "90 minutes",
       totalQuestions: 100,
       maxMarks: 100,
+      id: 301,
+      sections: [
+        { name: "Reasoning", questions: 25, id: 1 },
+        { name: "GK", questions: 25, id: 2 },
+        { name: "Maths", questions: 25, id: 3 },
+        { name: "Computer", questions: 25, id: 4 },
+      ],
     },
+
     {
       name: "RRB Group D",
       icon: "🚂",
@@ -84,7 +154,15 @@ export const examCategories = {
       duration: "90 minutes",
       totalQuestions: 100,
       maxMarks: 100,
+      id: 302,
+      sections: [
+        { name: "Reasoning", questions: 25, id: 1 },
+        { name: "GK", questions: 25, id: 2 },
+        { name: "Maths", questions: 25, id: 3 },
+        { name: "Computer", questions: 25, id: 4 },
+      ],
     },
+
     {
       name: "RRB ALP",
       icon: "🚂",
@@ -92,6 +170,13 @@ export const examCategories = {
       duration: "90 minutes",
       totalQuestions: 100,
       maxMarks: 100,
+      id: 303,
+      sections: [
+        { name: "Reasoning", questions: 25, id: 1 },
+        { name: "GK", questions: 25, id: 2 },
+        { name: "Maths", questions: 25, id: 3 },
+        { name: "Computer", questions: 25, id: 4 },
+      ],
     },
   ],
 };
