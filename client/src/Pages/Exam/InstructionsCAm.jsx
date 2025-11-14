@@ -2,20 +2,65 @@ import { BookOpen } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { testStart } from "../../store/testsesionSlice";
 
 const InstructionsCAm = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-const { name, duration, totalQuestions, maxMarks } = location.state || {
-  name: "Unknown Exam",
-  duration: "N/A",
-  totalQuestions: 0,
-  maxMarks: 0,
-};
-const { examName } = useParams();
-const handleSubmit = () => {
-  navigate(`/exams/${examName}/test`, { state: { name, duration, totalQuestions, maxMarks } } );
-}
+  const { name, duration, totalQuestions, maxMarks } = location.state || {
+    name: "Unknown Exam",
+    duration: "N/A",
+    totalQuestions: 0,
+    maxMarks: 0,
+  };
+
+  const { examName } = useParams();
+
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        userId: user.userId, // backend wants "userId" (not userid)
+        categoryId: 2, // you can replace with dynamic
+        mode: "EASY",
+      };
+
+      // 1️⃣ CALL BACKEND
+      const response = await fetch(`${API_URL}/api/tests/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      // Example response:
+      // { "testSessionId": 101, "status": "STARTED" }
+
+      // 2️⃣ UPDATE REDUX
+      dispatch(
+        testStart({
+          userid: user.userId,
+          categoryId: 2,
+          mode: "EASY",
+          testSessionId: data.testSessionId,
+        })
+      );
+
+      console.log("TEST SESSION:", data.testSessionId);
+
+      // 3️⃣ REDIRECT TO TEST PAGE
+      navigate(`/exams/${examName}/test`, {
+        state: { name, duration, totalQuestions, maxMarks },
+      });
+    } catch (error) {
+      console.error("Error starting test:", error);
+    }
+  };
+
   const [accepted, setAccepted] = useState(false);
   return (
     <div>
@@ -36,9 +81,7 @@ const handleSubmit = () => {
         <div className="bg-white rounded-xl p-6 shadow-md h-full">
           {/* Header */}
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-indigo-700">
-              {name}
-            </h2>
+            <h2 className="text-2xl font-bold text-indigo-700">{name}</h2>
           </div>
 
           {/* Duration and Marks */}
@@ -68,7 +111,6 @@ const handleSubmit = () => {
               </li>
             </ol>
 
-
             <div className="text-center mt-6 font-semibold text-indigo-700">
               "ALL THE BEST"
             </div>
@@ -96,7 +138,7 @@ const handleSubmit = () => {
           {/* Start Button */}
           <div className="flex justify-end mt-6">
             <button
-            onClick={handleSubmit}
+              onClick={handleSubmit}
               disabled={!accepted}
               className={`flex items-center gap-2 px-6 py-2 font-semibold rounded-xl transition ${
                 accepted
