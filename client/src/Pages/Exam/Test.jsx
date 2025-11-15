@@ -3,6 +3,7 @@ import React from "react";
 import { useTestLogic } from "../../hooks/useTestLogic";
 
 const Test = () => {
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
   const {
     examData,
     sections,
@@ -26,16 +27,41 @@ const Test = () => {
     getSaveNextButtonText,
   } = useTestLogic();
 
-
+  // OPTION MAPPING (text + image support)
+  const optionList = question
+    ? [
+        {
+          value: question.option1,
+          img: question.option1ImageUrl,
+          key: "option1",
+        },
+        {
+          value: question.option2,
+          img: question.option2ImageUrl,
+          key: "option2",
+        },
+        {
+          value: question.option3,
+          img: question.option3ImageUrl,
+          key: "option3",
+        },
+        {
+          value: question.option4,
+          img: question.option4ImageUrl,
+          key: "option4",
+        },
+      ].filter((o) => o.value || o.img)
+    : [];
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* MAIN LEFT */}
+      {/* LEFT MAIN PANEL */}
       <div className="flex-1 flex flex-col">
+
         {/* HEADER */}
         <div className="flex justify-between items-center bg-white px-6 py-3 shadow">
           <div>
-            <h1 className="text-lg font-bold">{examData.name}</h1>
+            <h1 className="text-lg font-bold">{examData?.name}</h1>
             <p className="text-sm text-gray-600">Stage I (CBT I)</p>
           </div>
           <div className="text-red-600 font-bold">{formatTime(timeLeft)}</div>
@@ -70,35 +96,52 @@ const Test = () => {
                 Question {currentQuestion} / {questions.length}
               </div>
 
-              <p className="text-lg mb-6">{question.questionText}</p>
+              {/* QUESTION TEXT OR IMAGE */}
+              {question.questionImageUrl ? (
+                <img
+                  src={`${API_URL}${question.questionImageUrl}`}
+                  alt="question"
+                  className="max-w-[450px] mb-6 rounded border shadow"
+                />
+              ) : (
+                <p className="text-lg mb-6">{question.questionText}</p>
+              )}
 
+              {/* OPTIONS */}
               <div className="space-y-3">
-                {[
-                  question.option1,
-                  question.option2,
-                  question.option3,
-                  question.option4,
-                ]
-                  .filter(Boolean)
-                  .map((opt, i) => (
-                    <label
-                      key={i}
-                      className={`flex items-center border p-3 rounded cursor-pointer ${
-                        selectedOption === opt
-                          ? "bg-blue-100 border-blue-500"
-                          : ""
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        value={opt}
-                        checked={selectedOption === opt}
-                        onChange={() => handleOptionChange(opt)}
-                        className="mr-3"
-                      />
-                      {opt}
-                    </label>
-                  ))}
+                {optionList.map((opt, index) => (
+                  <label
+                    key={index}
+                    className={`flex items-center border p-3 rounded cursor-pointer gap-3 ${
+                      selectedOption === opt.value
+                        ? "bg-blue-100 border-blue-500"
+                        : ""
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      value={opt.value}
+                      checked={selectedOption === opt.value}
+                      onChange={() => handleOptionChange(opt.value)}
+                      className="mt-1"
+                    />
+
+                    {/* OPTION CONTENT */}
+                    <div>
+                      {/* If image exists → show image */}
+                      {opt.img && (
+                        <img
+                          src={opt.img}
+                          alt={`option-${index + 1}`}
+                          className="max-w-[300px] rounded border mb-2"
+                        />
+                      )}
+
+                      {/* Show text if exists */}
+                      {opt.value && <span>{opt.value}</span>}
+                    </div>
+                  </label>
+                ))}
               </div>
             </>
           ) : (
@@ -116,6 +159,7 @@ const Test = () => {
             >
               Mark for Review
             </button>
+
             <button
               onClick={handleClearResponse}
               disabled={!question}
@@ -138,6 +182,8 @@ const Test = () => {
       {/* RIGHT PANEL */}
       <div className="w-72 bg-blue-50 border-l flex flex-col">
         <div className="p-4">
+
+          {/* STATUS COUNTERS */}
           <div className="flex flex-wrap gap-2 text-xs mb-4">
             <span className="bg-green-500 text-white px-2 py-1 rounded">
               {countStatus("answered")} Answered
@@ -153,7 +199,7 @@ const Test = () => {
             </span>
           </div>
 
-          {/* Question buttons grid */}
+          {/* QUESTION GRID */}
           <div className="grid grid-cols-5 gap-2 max-h-[400px] overflow-y-auto">
             {questions.map((_, i) => (
               <button
