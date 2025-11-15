@@ -18,17 +18,18 @@ const InstructionsCAm = () => {
     maxMarks: 0,
   };
 
+
   const { examName } = useParams();
 
   const handleSubmit = async () => {
     try {
       const payload = {
-        userId: user.userId, // backend wants "userId" (not userid)
-        categoryId: 2, // you can replace with dynamic
+        userId: user.userId,
+        examName: examName, 
         mode: "EASY",
       };
+      // console.log(payload)
 
-      // 1️⃣ CALL BACKEND
       const response = await fetch(`${API_URL}/api/tests/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -36,21 +37,18 @@ const InstructionsCAm = () => {
       });
 
       const data = await response.json();
-
-      // Example response:
-      // { "testSessionId": 101, "status": "STARTED" }
-
-      // 2️⃣ UPDATE REDUX
+      // console.log(d/ata)
       dispatch(
         testStart({
           userid: user.userId,
-          categoryId: 2,
+          completed:data.completed,
+          examName: data.examName,
           mode: "EASY",
-          testSessionId: data.testSessionId,
+          id: data.id,
         })
       );
 
-      console.log("TEST SESSION:", data.testSessionId);
+      // console.log("TEST SESSION:", data.id);
 
       // 3️⃣ REDIRECT TO TEST PAGE
       navigate(`/exams/${examName}/test`, {

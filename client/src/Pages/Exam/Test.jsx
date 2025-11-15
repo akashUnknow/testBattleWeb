@@ -13,7 +13,6 @@ const Test = () => {
     questions,
     question,
     selectedOption,
-    questionStatus,
     formatTime,
     loadSectionQuestions,
     handleSaveAndNext,
@@ -26,6 +25,8 @@ const Test = () => {
     handleSubmitTest,
     getSaveNextButtonText,
   } = useTestLogic();
+
+
 
   return (
     <div className="flex h-screen bg-gray-100">

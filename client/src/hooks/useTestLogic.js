@@ -1,6 +1,6 @@
 // hooks/useTestLogic.js
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import {  useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { examCategories } from "../data/examData";
@@ -23,9 +23,11 @@ export const useTestLogic = () => {
   const dispatch = useDispatch();
 
   // Redux state
-  const { sections: sectionData, activeSectionId, timeLeft } = useSelector(
-    (state) => state.test
-  );
+  const {
+    sections: sectionData,
+    activeSectionId,
+    timeLeft,
+  } = useSelector((state) => state.test);
 
   // Exam Data
   const examData = {
@@ -85,13 +87,16 @@ export const useTestLogic = () => {
   };
 
   // Get current section data
-  const currentSectionData = activeSectionId ? sectionData[activeSectionId] : null;
+  const currentSectionData = activeSectionId
+    ? sectionData[activeSectionId]
+    : null;
   const questions = currentSectionData?.questions || [];
   const currentQuestion = currentSectionData?.currentQuestion || 1;
   const answers = currentSectionData?.answers || {};
   const questionStatus = currentSectionData?.questionStatus || [];
   const selectedOption = answers[currentQuestion] || null;
   const question = questions[currentQuestion - 1];
+  const {id}=useSelector((state)=>state.testsesion)
 
   // Load Questions
   const loadSectionQuestions = async (section) => {
@@ -133,7 +138,10 @@ export const useTestLogic = () => {
     );
 
     // Check if there's a next section
-    if (currentSectionIndex !== -1 && currentSectionIndex < sections.length - 1) {
+    if (
+      currentSectionIndex !== -1 &&
+      currentSectionIndex < sections.length - 1
+    ) {
       const nextSection = sections[currentSectionIndex + 1];
       loadSectionQuestions(nextSection);
     } else {
@@ -264,7 +272,7 @@ export const useTestLogic = () => {
   const countStatus = (s) => questionStatus.filter((x) => x === s).length;
 
   // Submit Test
-  const handleSubmitTest = () => {
+  const handleSubmitTest = async () => {
     let totalCorrect = 0;
     let totalAttempted = 0;
     let totalQuestions = 0;
@@ -290,6 +298,7 @@ export const useTestLogic = () => {
     dispatch(resetTest());
 
     navigate("/result", {
+
       state: {
         total: totalQuestions,
         attempted: totalAttempted,
@@ -297,14 +306,33 @@ export const useTestLogic = () => {
         scorePercent: ((totalCorrect / totalQuestions) * 100).toFixed(2),
         name,
       },
+      
+      
     });
+    const scorePercent=Number(((totalCorrect / totalQuestions) * 100).toFixed(2))
+    
+    try {
+      const payload = {
+        testSessionId: id,
+        completed: true,
+        score: scorePercent,
+      };
+      console.log(payload)
+
+      const res = await axios.post(`${API_URL}/api/tests/submit`, payload);
+          console.log("Submit Response:", res.data);
+          
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Get dynamic button text
   const getSaveNextButtonText = () => {
     if (
       currentQuestion === questions.length &&
-      sections.findIndex((s) => s.id === activeSectionId) === sections.length - 1
+      sections.findIndex((s) => s.id === activeSectionId) ===
+        sections.length - 1
     ) {
       return "Submit Test";
     }
@@ -326,7 +354,7 @@ export const useTestLogic = () => {
     question,
     selectedOption,
     questionStatus,
-    
+
     // Functions
     formatTime,
     loadSectionQuestions,

@@ -28,13 +28,16 @@ function App() {
         <Route path="log-in" element={<Login />} />
         <Route path="Register" element={<Register />} />
         <Route path="/update-profile" element={<UpdateProfile />} />
+        <Route path="/result" element={<Result />} />
       </Route>
       <Route path="CompetitiveExam" element={<CompetitiveExam />} />
       <Route path="exams/:examName/instructions" element={<Instructions />} />
-      <Route path="exams/:examName/instructionsCAm" element={<InstructionsCAm />} />
+      <Route
+        path="exams/:examName/instructionsCAm"
+        element={<InstructionsCAm />}
+      />
       <Route path="exam-detail" element={<ExamDetail />} />
       <Route path="exams/:examName/test" element={<Test />} />
-      <Route path="/result" element={<Result />} />
     </Routes>
   );
 }

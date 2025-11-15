@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  testSessionId: null,
-  categoryId: null,
+  id: null,
+  examName: null,
   completed: false,
   mode: "EASY",
   score: null,
@@ -10,18 +10,20 @@ const initialState = {
 };
 
 const testsesionSlice = createSlice({
-  name: "testsession",   // ← FIXED NAME
+  name: "testsession", // ← FIXED NAME
   initialState,
   reducers: {
     testStart(state, action) {
-      const { userid, categoryId, mode } = action.payload;
+      const { userid, examName, mode, completed, id } = action.payload;
       state.userid = userid;
-      state.categoryId = categoryId;
+      state.completed = completed;
+      state.examName = examName;  
       state.mode = mode;
+      state.id = id;
     },
     testSubmit(state, action) {
-      const { testSessionId, completed, score } = action.payload;
-      state.testSessionId = testSessionId;
+      const { id, completed, score } = action.payload;
+      state.id = id;
       state.completed = completed;
       state.score = score;
     },
