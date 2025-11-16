@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -20,8 +22,6 @@ import {
   FieldDescription,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import {
   loginStart,
   loginFailure,
@@ -38,14 +38,16 @@ const Login = () => {
   const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const API_URL = import.meta.env.VITE_API_URL;
+  const from = location.state?.from || "/dashboard";
 
   // 🔹 Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, from]);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -91,7 +93,7 @@ const Login = () => {
           JSON.stringify({ name: result.name, email: result.email ,userId: result.userId})
         );
 
-        navigate("/dashboard");
+         navigate(from, { replace: true });
       } else {
         toast.error("Login Failed", {
           description: result.error || result.message || "Invalid credentials",
