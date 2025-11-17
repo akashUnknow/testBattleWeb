@@ -1,21 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-import { Loader2, Lock } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import axios from 'axios';
 
 const ProtectedRoute = ({ children, requireAuth = true, redirectTo = "/log-in" }) => {
   const { isAuthenticated, loading } = useSelector((state) => state.auth);
   const location = useLocation();
   const [isChecking, setIsChecking] = useState(true);
+  const [oAuthAuthenticated, setOAuthAuthenticated] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    // Simulate checking auth state
+    const checkOAuthSession = async () => {
+      // If already authenticated via Redux, no need to check
+      if (isAuthenticated) {
+        setIsChecking(false);
+        return;
+      }
+
+      // Check if there's an OAuth session by trying to fetch user-info
+      try {
+        const response = await axios.get(`${API_URL}/user-info`, {
+          withCredentials: true,
+          timeout: 5000,
+        });
+
+        if (response.data && response.data.email) {
+          // OAuth session exists
+          setOAuthAuthenticated(true);
+        }
+      } catch (error) {
+        console.log(error)
+        // No OAuth session
+        setOAuthAuthenticated(false);
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
     const timer = setTimeout(() => {
-      setIsChecking(false);
+      checkOAuthSession();
     }, 300);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isAuthenticated, API_URL]);
 
   // Show loading state while checking authentication
   if (isChecking || loading) {
@@ -30,7 +59,7 @@ const ProtectedRoute = ({ children, requireAuth = true, redirectTo = "/log-in" }
   }
 
   // Check if route requires authentication
-  if (requireAuth && !isAuthenticated) {
+  if (requireAuth && !isAuthenticated && !oAuthAuthenticated) {
     return (
       <Navigate 
         to={redirectTo} 
@@ -41,8 +70,8 @@ const ProtectedRoute = ({ children, requireAuth = true, redirectTo = "/log-in" }
   }
 
   // Check if user is trying to access auth pages while logged in
-  if (!requireAuth && isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+  if (!requireAuth && (isAuthenticated || oAuthAuthenticated)) {
+    return <Navigate to="/" replace />;
   }
 
   return children;

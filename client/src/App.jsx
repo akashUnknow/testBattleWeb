@@ -62,6 +62,7 @@ function App() {
               element={
                 <GuestRoute>
                   <Login />
+                  
                 </GuestRoute>
               } 
             />
@@ -74,6 +75,17 @@ function App() {
                 </GuestRoute>
               } 
             />
+
+           {/* <Route 
+              path="dashboard" 
+              element={
+                <AuthRoute>
+                  <Dashboard />
+                </AuthRoute>
+              } 
+            /> */}
+            
+
 
             {/* Placeholder Routes - Can be accessed by anyone */}
             <Route path="super-coaching" element={<Dashboard />} />
