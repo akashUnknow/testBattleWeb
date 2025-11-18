@@ -4,6 +4,7 @@ import Layout from "./Layout/Layout";
 import { AuthRoute, GuestRoute } from "./ProtectedRoute/ProtectedRoute";
 import { LoadingScreen } from "./components/LoadingScreen";
 import ErrorBoundary from "./components/ErrorBoundary";
+import TestSeries from "./Pages/TestSeries/TestSeries";
 
 // Lazy load components
 const Home = lazy(() => import("./Pages/Home"));
@@ -89,7 +90,7 @@ function App() {
 
             {/* Placeholder Routes - Can be accessed by anyone */}
             <Route path="super-coaching" element={<Dashboard />} />
-            <Route path="test-series" element={<Dashboard />} />
+            <Route path="test-series" element={<TestSeries />} />
             <Route path="skill-academy" element={<Dashboard />} />
             <Route path="pass" element={<Dashboard />} />
           </Route>
