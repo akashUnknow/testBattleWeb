@@ -155,7 +155,7 @@ const Test = () => {
                 </h3>
                 {question.questionImageUrl ? (
                   <img
-                    src={`${API_URL}${question.questionImageUrl}`}
+                    src={`${question.questionImageUrl}`}
                     alt="question"
                     className="max-w-full rounded-lg border shadow-sm mb-3"
                   />
